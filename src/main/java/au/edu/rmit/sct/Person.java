@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.io.File;
 
 public class Person {
     private String personID;
@@ -51,20 +52,50 @@ public class Person {
 
         demeritRecords.add(new DemeritRecord(date, points));
 
+        try {
+            File file = new File("persons.txt");
+            List<String> updatedLines = new ArrayList<>();
+            Scanner scanner = new Scanner(file);
+
+            String personLine = String.join(",", personID, firstName, lastName, address, birthDate);
+            String newDemerit = date + ":" + points;
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.startsWith(personLine)) {
+                    if (!line.contains("Demerit:")) {
+                        // First demerit: add title and the new demerit
+                        line += ",Demerit:" + newDemerit;
+                    } else {
+                        // Already has demerits, just append the new one
+                        line += "," + newDemerit;
+                    }
+                }
+                updatedLines.add(line);
+            }
+            scanner.close();
+
+            FileWriter writer = new FileWriter(file, false);
+            for (String l : updatedLines) {
+                writer.write(l + "\n");
+            }
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Failed";
+        }
+
         int totalPoints = calculateRecentPoints();
         int age = calculateAge();
-
-
-
-
         if ((age < 21 && totalPoints > 6) || (age >= 21 && totalPoints >= 12)) {
             isSuspended = true;
         }
 
-
-
         return "Success";
     }
+
+
 
 
 
