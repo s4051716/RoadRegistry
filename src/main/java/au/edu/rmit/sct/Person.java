@@ -15,6 +15,7 @@ public class Person {
     private boolean isSuspended = false;
     private List<DemeritRecord> demeritRecords = new ArrayList<>();
 
+    // Inner class to store each demerit record (date and points)
     static class DemeritRecord {
         String date;
         int points;
@@ -25,6 +26,7 @@ public class Person {
         }
     }
 
+    // Adds a new person if all validations pass, and writes to persons.txt
     public boolean addPerson(String personID, String firstName, String lastName, String address, String birthDate) {
         if (!isValidID(personID) || !isValidAddress(address) || !isValidDate(birthDate)) {
             return false;
@@ -46,6 +48,7 @@ public class Person {
         return true;
     }
 
+    // Adds demerit points, checks for suspension, and logs to demerits.txt
     public String addDemeritPoints(String date, int points) {
         if (!isValidDate(date) || points < 1 || points > 6) return "Failed";
 
@@ -54,12 +57,12 @@ public class Person {
         int totalPoints = calculateRecentPoints();
         int age = calculateAge();
 
-        // Check suspension logic
+        // Determine suspension status based on age and accumulated points
         if ((age < 21 && totalPoints > 6) || (age >= 21 && totalPoints >= 12)) {
             isSuspended = true;
         }
 
-        // Write to demerits.txt
+        // Log the demerit action to demerits.txt
         try (FileWriter writer = new FileWriter("demerits.txt", true)) {
             writer.write(String.join(",", this.personID, date, String.valueOf(points), isSuspended ? "Suspended" : "Active") + "\n");
         } catch (IOException e) {
@@ -71,6 +74,7 @@ public class Person {
     }
 
 
+    // Calculates demerit points within the last 2 years
     private int calculateRecentPoints() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate twoYearsAgo = LocalDate.now().minusYears(2);
@@ -82,12 +86,13 @@ public class Person {
                 .sum();
     }
 
+    // Returns the number of demerit records
     public int getDemeritRecordCount() {
         return demeritRecords.size();
     }
 
 
-
+    // Calculates age based on birth date
     private int calculateAge() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate birth = LocalDate.parse(birthDate, formatter);
@@ -95,10 +100,12 @@ public class Person {
         return today.getYear() - birth.getYear() - (today.getDayOfYear() < birth.getDayOfYear() ? 1 : 0);
     }
 
+    // Returns suspension status
     public boolean isSuspended() {
         return isSuspended;
     }
 
+    // Validates person ID based on length, digit, symbol, and character placement rules
     private boolean isValidID(String id) {
         if (id.length() != 10) return false;
         if (!id.substring(0, 2).matches("[2-9]{2}")) return false;
@@ -111,11 +118,13 @@ public class Person {
         return specialCount >= 2;
     }
 
+    // Validates address format (must have 5 parts, state must be Victoria)
     private boolean isValidAddress(String address) {
         String[] parts = address.split("\\|");
         return parts.length == 5 && parts[3].equalsIgnoreCase("Victoria");
     }
 
+    // Validates date format as dd-MM-yyyy
     private boolean isValidDate(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -125,6 +134,8 @@ public class Person {
             return false;
         }
     }
+
+    // Updates personal details with checks on age, ID, address, and birthday changes
     public boolean updatePersonalDetails(String newID, String newFirstName, String newLastName, String newAddress, String newBirthDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -135,28 +146,29 @@ public class Person {
             boolean isAddressChanged = !this.address.equals(newAddress);
 
 
+            // Cannot change birthday and other fields simultaneously
             if (isBirthdayChanged && (isIDChanged || isNameChanged || isAddressChanged)) {
                 return false;
             }
 
-
+            // Underage individuals cannot change address
             int age = calculateAge();
             if (age < 18 && isAddressChanged) {
                 return false;
             }
 
-
+            // Persons with even-starting ID cannot change ID
             char firstDigit = this.personID.charAt(0);
             if (Character.isDigit(firstDigit) && ((firstDigit - '0') % 2 == 0) && isIDChanged) {
                 return false;
             }
 
-
+            // Validate new input values
             if (!isValidID(newID) || !isValidAddress(newAddress) || !isValidDate(newBirthDate)) {
                 return false;
             }
 
-
+            // Apply updates
             this.personID = newID;
             this.firstName = newFirstName;
             this.lastName = newLastName;
@@ -169,5 +181,4 @@ public class Person {
             return false;
         }
     }
-
 }
