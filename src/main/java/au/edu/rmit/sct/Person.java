@@ -52,51 +52,24 @@ public class Person {
 
         demeritRecords.add(new DemeritRecord(date, points));
 
-        try {
-            File file = new File("persons.txt");
-            List<String> updatedLines = new ArrayList<>();
-            Scanner scanner = new Scanner(file);
+        int totalPoints = calculateRecentPoints();
+        int age = calculateAge();
 
-            String personLine = String.join(",", personID, firstName, lastName, address, birthDate);
-            String newDemerit = date + ":" + points;
+        // Check suspension logic
+        if ((age < 21 && totalPoints > 6) || (age >= 21 && totalPoints >= 12)) {
+            isSuspended = true;
+        }
 
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith(personLine)) {
-                    if (!line.contains("Demerit:")) {
-                        // First demerit: add title and the new demerit
-                        line += ",Demerit:" + newDemerit;
-                    } else {
-                        // Already has demerits  just append the new one
-                        line += "," + newDemerit ;
-                    }
-                }
-                updatedLines.add(line);
-            }
-            scanner.close();
-
-            FileWriter writer = new FileWriter(file, false);
-            for (String l : updatedLines) {
-                writer.write(l + "\n");
-            }
-            writer.close();
-
+        // Write to demerits.txt
+        try (FileWriter writer = new FileWriter("demerits.txt", true)) {
+            writer.write(String.join(",", this.personID, date, String.valueOf(points), isSuspended ? "Suspended" : "Active") + "\n");
         } catch (IOException e) {
             e.printStackTrace();
             return "Failed";
         }
 
-        int totalPoints = calculateRecentPoints();
-        int age = calculateAge();
-        if ((age < 21 && totalPoints > 6) || (age >= 21 && totalPoints >= 12)) {
-            isSuspended = true;
-        }
-
         return "Success";
     }
-
-
-
 
 
     private int calculateRecentPoints() {
