@@ -61,7 +61,7 @@ public class Person {
             isSuspended = true;
         }
 
-        System.out.println("Suspended? " + isSuspended);
+
 
         return "Success";
     }
