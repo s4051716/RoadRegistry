@@ -67,7 +67,7 @@ public class Person {
                         // First demerit: add title and the new demerit
                         line += ",Demerit:" + newDemerit;
                     } else {
-                        // Already has demerits, just append the new one
+                        // Already has demerits  just append the new one
                         line += "," + newDemerit;
                     }
                 }
