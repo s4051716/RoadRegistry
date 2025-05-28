@@ -68,7 +68,7 @@ public class Person {
                         line += ",Demerit:" + newDemerit;
                     } else {
                         // Already has demerits  just append the new one
-                        line += "," + newDemerit;
+                        line += "," + newDemerit ;
                     }
                 }
                 updatedLines.add(line);
