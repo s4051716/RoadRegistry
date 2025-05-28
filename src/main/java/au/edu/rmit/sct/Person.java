@@ -47,6 +47,36 @@ public class Person {
 
         return true;
     }
+    // Validates person ID based on length, digit, symbol, and character placement rules
+    private boolean isValidID(String id) {
+        if (id.length() != 10) return false;
+        if (!id.substring(0, 2).matches("[2-9]{2}")) return false;
+        if (!id.substring(8, 10).matches("[A-Z]{2}")) return false;
+        String middle = id.substring(2, 8);
+        int specialCount = 0;
+        for (char c : middle.toCharArray()) {
+            if (!Character.isLetterOrDigit(c)) specialCount++;
+        }
+        return specialCount >= 2;
+    }
+
+    // Validates address format (must have 5 parts, state must be Victoria)
+    private boolean isValidAddress(String address) {
+        String[] parts = address.split("\\|");
+        return parts.length == 5 && parts[3].equalsIgnoreCase("Victoria");
+    }
+
+    // Validates date format as dd-MM-yyyy
+    private boolean isValidDate(String date) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate.parse(date, formatter);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     // Adds demerit points, checks for suspension, and logs to demerits.txt
     public String addDemeritPoints(String date, int points) {
@@ -105,35 +135,6 @@ public class Person {
         return isSuspended;
     }
 
-    // Validates person ID based on length, digit, symbol, and character placement rules
-    private boolean isValidID(String id) {
-        if (id.length() != 10) return false;
-        if (!id.substring(0, 2).matches("[2-9]{2}")) return false;
-        if (!id.substring(8, 10).matches("[A-Z]{2}")) return false;
-        String middle = id.substring(2, 8);
-        int specialCount = 0;
-        for (char c : middle.toCharArray()) {
-            if (!Character.isLetterOrDigit(c)) specialCount++;
-        }
-        return specialCount >= 2;
-    }
-
-    // Validates address format (must have 5 parts, state must be Victoria)
-    private boolean isValidAddress(String address) {
-        String[] parts = address.split("\\|");
-        return parts.length == 5 && parts[3].equalsIgnoreCase("Victoria");
-    }
-
-    // Validates date format as dd-MM-yyyy
-    private boolean isValidDate(String date) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            LocalDate.parse(date, formatter);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     // Updates personal details with checks on age, ID, address, and birthday changes
     public boolean updatePersonalDetails(String newID, String newFirstName, String newLastName, String newAddress, String newBirthDate) {
