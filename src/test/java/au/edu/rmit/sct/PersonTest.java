@@ -164,6 +164,8 @@ public class PersonTest {
         boolean updated = p.updatePersonalDetails("56s_d%&fAB", "Jane", "Doe", "Melbourne|Victoria|Australia", "15-11-2000");
         assertFalse(updated);
     }
+
+
     //ADD DEMERIT POINTS TESTS
 
 
