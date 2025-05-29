@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class PersonTest {
 
 
-    //ADD DEMERIT POINTS TESTS
+    // ADD DEMERIT POINTS TESTS
 
 
     // Demerit test: valid points, no suspension expected
