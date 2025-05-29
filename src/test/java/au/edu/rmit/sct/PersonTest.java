@@ -6,76 +6,6 @@ import java.time.format.DateTimeFormatter;
 
 public class PersonTest {
 
-
-    // ADD DEMERIT POINTS TESTS
-
-
-    // Demerit test: valid points, no suspension expected
-    @Test
-    public void testAddDemeritPoints_ValidNotSuspended() {
-        Person p = new Person();
-        p.addPerson("56s_d%&fAB", "Alex", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
-
-        String result = p.addDemeritPoints("01-01-2024", 3);
-        assertEquals("Success", result);
-        assertFalse(p.isSuspended());
-    }
-
-    // Demerit test: suspension expected for person under 21
-    @Test
-    public void testAddDemeritPoints_ValidSuspensionUnder21() {
-        Person p = new Person();
-        p.addPerson("56s_d%&fAB", "Ella", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2007"); // Age < 21
-
-        p.addDemeritPoints("01-01-2024", 4);
-        p.addDemeritPoints("01-06-2024", 3);
-
-        assertTrue(p.isSuspended()); // Under 21 and total > 6
-    }
-
-    // Demerit test: suspension expected for person over 21
-    @Test
-    public void testAddDemeritPoints_ValidSuspensionOver21() {
-        Person p = new Person();
-        boolean added = p.addPerson("56s_d%&fAB", "Chris", "Doe", "12|Main Road|Melbourne|Victoria|Australia", "15-11-1990");
-        assertTrue(added);
-
-        String recentDate1 = LocalDate.now().minusMonths(6).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        String recentDate2 = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-
-
-        String result1 = p.addDemeritPoints(recentDate1, 6);
-        String result2 = p.addDemeritPoints(recentDate2, 6);
-
-
-        assertEquals(2, p.getDemeritRecordCount());
-        assertTrue(p.isSuspended());
-    }
-
-    // Invalid date format should fail
-    @Test
-    public void testAddDemeritPoints_InvalidDateFormat_ShouldFail() {
-        Person p = new Person();
-        p.addPerson("56s_d%&fAB", "John", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
-
-        String result = p.addDemeritPoints("2024-01-01", 5);
-        assertEquals("Failed", result);
-    }
-
-    // Points out of valid range should fail
-    @Test
-    public void testAddDemeritPoints_PointsOutOfRange_ShouldFail() {
-        Person p = new Person();
-        p.addPerson("56s_d%&fAB", "Maya", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
-
-        String low = p.addDemeritPoints("01-01-2024", 0);
-        String high = p.addDemeritPoints("01-01-2024", 10);
-
-        assertEquals("Failed", low);
-        assertEquals("Failed", high);
-    }
-
-
     // ADD PERSON TESTS
 
 
@@ -234,4 +164,74 @@ public class PersonTest {
         boolean updated = p.updatePersonalDetails("56s_d%&fAB", "Jane", "Doe", "Melbourne|Victoria|Australia", "15-11-2000");
         assertFalse(updated);
     }
+
+
+    //ADD DEMERIT POINTS TESTS
+
+
+    // Demerit test: valid points, no suspension expected
+    @Test
+    public void testAddDemeritPoints_ValidNotSuspended() {
+        Person p = new Person();
+        p.addPerson("56s_d%&fAB", "Alex", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
+
+        String result = p.addDemeritPoints("01-01-2024", 3);
+        assertEquals("Success", result);
+        assertFalse(p.isSuspended());
+    }
+
+    // Demerit test: suspension expected for person under 21
+    @Test
+    public void testAddDemeritPoints_ValidSuspensionUnder21() {
+        Person p = new Person();
+        p.addPerson("56s_d%&fAB", "Ella", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2007"); // Age < 21
+
+        p.addDemeritPoints("01-01-2024", 4);
+        p.addDemeritPoints("01-06-2024", 3);
+
+        assertTrue(p.isSuspended()); // Under 21 and total > 6
+    }
+
+    // Demerit test: suspension expected for person over 21
+    @Test
+    public void testAddDemeritPoints_ValidSuspensionOver21() {
+        Person p = new Person();
+        boolean added = p.addPerson("56s_d%&fAB", "Chris", "Doe", "12|Main Road|Melbourne|Victoria|Australia", "15-11-1990");
+        assertTrue(added);
+
+        String recentDate1 = LocalDate.now().minusMonths(6).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String recentDate2 = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+
+        String result1 = p.addDemeritPoints(recentDate1, 6);
+        String result2 = p.addDemeritPoints(recentDate2, 6);
+
+
+        assertEquals(2, p.getDemeritRecordCount());
+        assertTrue(p.isSuspended());
+    }
+
+    // Invalid date format should fail
+    @Test
+    public void testAddDemeritPoints_InvalidDateFormat_ShouldFail() {
+        Person p = new Person();
+        p.addPerson("56s_d%&fAB", "John", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
+
+        String result = p.addDemeritPoints("2024-01-01", 5);
+        assertEquals("Failed", result);
+    }
+
+    // Points out of valid range should fail
+    @Test
+    public void testAddDemeritPoints_PointsOutOfRange_ShouldFail() {
+        Person p = new Person();
+        p.addPerson("56s_d%&fAB", "Maya", "Doe", "10|Test St|Melbourne|Victoria|Australia", "15-11-2000");
+
+        String low = p.addDemeritPoints("01-01-2024", 0);
+        String high = p.addDemeritPoints("01-01-2024", 10);
+
+        assertEquals("Failed", low);
+        assertEquals("Failed", high);
+    }
+    
 }
